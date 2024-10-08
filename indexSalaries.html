@@ -12,14 +12,29 @@
     // Load the Visualization API and the corechart package.
     google.charts.load('current', {'packages':['corechart']});
 // Set a callback to run when the Google Visualization API is loaded.
-    google.charts.setOnLoadCallback(drawChart);
+// NOTE: I've commented this function because cause an error due to the drawChart's parameter is not defined
+    //google.charts.setOnLoadCallback(drawChart);
 
     // get data from url
     let data = null;
     let url = "https://pollysnips.s3.amazonaws.com/bostonEmployeeSalaries.json"
     fetch(url).then((response) => response.json())
         .then(json => {
+            /**
+            ---------------------------------------------------------------------------------------------
+            NOTE: I've added the following lines to enable the analyzeData button once the data is loaded
+            Also, I've added a loading message that hiddes once the data is loaded
+            ---------------------------------------------------------------------------------------------
+            **/
+            analyzeData_btn = document.getElementById("analyzeData_btn")
+            loading_msg = document.getElementById("loading_msg")
+            loading_msg.hidden = true;
+            analyzeData_btn.disabled = false;
+            /** End of the added lines **/
+
             data = json;
+            // I've added this line to call the analyzeData function once the data is loaded
+            analyzeData()
             //writeData(JSON.stringify(data.data[0]));
         })
         .catch(error => {
@@ -39,9 +54,12 @@
 </script>
 <body>
     <h1>Boston City Valued Workers</h1>
+    <!-- NOTE: I've added a loading message that hiddes once the data is loaded -->
+    <h2 id="loading_msg"><blink>Loading Data</blink></h2>
     <label>Enter Cutoff Salary</label>
     <input id= "input" type = "number" value="300000">
-    <button onclick="analyzeData()" >Analyze Boston Data</button>
+    <!-- NOTE: I've added the disabled attribute to the button to prevent the user from clicking it before the data is loaded -->
+    <button onclick="analyzeData()" disabled id="analyzeData_btn">Analyze Boston Data</button>
     <div id="data">
     </div>
     <div id = "chart">
